@@ -3,15 +3,15 @@ import { IoClose } from "react-icons/io5"
 import Image from "next/image";
 function PhotoLibrary({ setImage, hidePhotoLibrary }) {
   const photots = [
-    "/avatars/1.png",
-    "/avatars/2.png",
-    "/avatars/3.png",
-    "/avatars/4.png",
-    "/avatars/5.png",
-    "/avatars/6.png",
-    "/avatars/7.png",
-    "/avatars/8.png",
-    "/avatars/9.png",
+    "/avatars/11.jpg",
+    "/avatars/12.jpg",
+    "/avatars/13.jpg",
+    "/avatars/14.jpg",
+    "/avatars/15.jpg",
+    "/avatars/16.jpg",
+    "/avatars/17.jpg",
+    "/avatars/18.jpg",
+    "/avatars/19.jpg",
   ]
   return (
     <div className="fixed top-0 left-0 max-h-[100vh] max-w-[100vw] w-full h-full flex justify-center items-center">
@@ -28,7 +28,7 @@ function PhotoLibrary({ setImage, hidePhotoLibrary }) {
               }}
             >
               <div className="h-24 w-24 cursor-pointer relative">
-                <Image src={photo} alt="avatar" fill />
+                <Image src={photo} alt="avatar" fill className="rounded-full" />
               </div>
             </div>
           ))}

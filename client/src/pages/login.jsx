@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
 import { FcGoogle } from "react-icons/fc";
 import { fireBaseAuth } from "@/utils/FirebaseConfig";
@@ -10,7 +10,14 @@ import { useStateProvier } from "@/context/StateContext";
 import { reducerCases } from "@/context/constants";
 function login() {
   const router = useRouter();
-  const [{ }, dispatch] = useStateProvier();
+  const [{ userInfo, newUser }, dispatch] = useStateProvier();
+
+  useEffect(() => {
+    if (userInfo?.id && !newUser) {
+      router.push("/")
+    }
+  })
+
   const handleLogin = async (e) => {
     e.preventDefault();
     const provider = new GoogleAuthProvider();
@@ -33,6 +40,15 @@ function login() {
           })
 
           router.push("/onboarding");
+        } else {
+          const { id, name, email, profilePicture: profileImage, status } = data;
+          dispatch({
+            type: reducerCases.SET_NEW_USER,
+            userInfo: {
+              id, name, email, profileImage, status
+            }
+          })
+          router.push("/")
         }
 
       } else {

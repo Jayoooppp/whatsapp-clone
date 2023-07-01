@@ -3,23 +3,27 @@ import { IoClose } from "react-icons/io5"
 
 function CapturePhoto({ setImage, hideCapturePhoto }) {
 
+  const videoRef = useRef(null);
+  const streamRef = useRef(null);
   useEffect(() => {
-    let stream;
     const startCamera = async () => {
-      stream = await navigator.mediaDevices.getUserMedia({
+      const stream = await navigator.mediaDevices.getUserMedia({
         video: true,
         audio: false
       });
       videoRef.current.srcObject = stream;
+      streamRef.current = stream;
     }
     startCamera();
     return () => {
-      stream?.getTracks().forEach((track) => track.stop());
+      if (streamRef.current) {
+        streamRef?.current?.srcObject?.getTracks().forEach((track) => track.stop());
+      }
     }
   }, [])
 
-  const videoRef = useRef(null);
   const capturePhoto = () => {
+    streamRef.current?.getTracks().forEach((track) => track.stop());
     const canvas = document.createElement("canvas")
     canvas.getContext("2d").drawImage(videoRef.current, 0, 0, 300, 150);
     setImage(canvas.toDataURL("image/jpeg"))
