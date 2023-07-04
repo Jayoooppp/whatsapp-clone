@@ -35,9 +35,9 @@ function onboarding() {
       if (data.status) {
         dispatch({ type: reducerCases.SET_NEW_USER, newUser: false })
         dispatch({
-          type: reducerCases.SET_NEW_USER,
+          type: reducerCases.SET_USER_INFO,
           userInfo: {
-            id: data.id,
+            id: data.data.id,
             name,
             email,
             profileImage: image,

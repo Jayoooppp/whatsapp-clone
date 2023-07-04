@@ -25,10 +25,10 @@ export const onBoardUser = async (req, res) => {
             return res.send({ msg: "Email, name and profile image is required", status: false })
         }
         const prisma = getPrismaInstance();
-        await prisma.user.create({
+        const user = await prisma.user.create({
             data: { email, name, about, profilePicture }
         })
-        return res.json({ msg: "Success", status: true })
+        return res.json({ msg: "Success", status: true, data: user })
     } catch (error) {
         console.log("🚀 ~ file: AuthController.js:25 ~ onBoardUser ~ error:", error)
 
