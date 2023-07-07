@@ -9,7 +9,6 @@ import { useStateProvier } from "@/context/StateContext";
 
 function ChatHeader() {
   const [{ userInfo, currentChatUser }] = useStateProvier();
-  console.log(currentChatUser)
 
   return (
     <div className="h-16 px-4 py-3 flex justify-between items-center bg-panel-header-background z-10">
