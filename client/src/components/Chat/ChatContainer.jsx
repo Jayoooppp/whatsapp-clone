@@ -3,6 +3,8 @@ import { calculateTime } from "@/utils/CalculateTime";
 import React from "react";
 import MessageStatus from "../common/MessageStatus";
 import ImageMessage from "./ImageMessage";
+import dynamic from "next/dynamic";
+const VoiceMessage = dynamic(() => import("./VoiceMessage"), { ssr: false });
 
 function ChatContainer() {
   const [{ messages, userInfo, currentChatUser }] = useStateProvier();
@@ -45,6 +47,11 @@ function ChatContainer() {
                   <>
                     <ImageMessage message={message} />
                   </>
+                )
+              }
+              {
+                message.type === "audio" && (
+                  <VoiceMessage message={message} />
                 )
               }
 
