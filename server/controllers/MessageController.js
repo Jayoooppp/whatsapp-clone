@@ -94,7 +94,6 @@ export const getMessages = async (req, res) => {
                 messageStatus: "read"
             }
         })
-        console.log("Returning the message")
 
         return res.status(200).json({ messages })
 
@@ -111,8 +110,6 @@ export const uploadImageController = async (req, res, next) => {
             let fileName = "uploads/images/" + date + req.file.originalname;
             const prisma = getPrismaInstance();
             renameSync(req.file.path, fileName);
-            console.log(req.file.path);
-            console.log(fileName);
             const { from, to } = req.query;
 
             if (from && to) {
@@ -130,6 +127,38 @@ export const uploadImageController = async (req, res, next) => {
 
         }
         return res.status(400).json("Image is required")
+
+
+    } catch (error) {
+        console.log("🚀 ~ file: MessageController.js:111 ~ uploadImageController ~ error:", error)
+
+    }
+}
+export const uploadAudioController = async (req, res, next) => {
+    try {
+
+        if (req.file) {
+            const date = Date.now();
+            let fileName = "uploads/recordings/" + date + req.file.originalname;
+            const prisma = getPrismaInstance();
+            renameSync(req.file.path, fileName);
+            const { from, to } = req.query;
+
+            if (from && to) {
+                const message = await prisma.Messages.create({
+                    data: {
+                        message: fileName,
+                        sender: { connect: { id: parseInt(from) } },
+                        receiver: { connect: { id: parseInt(to) } },
+                        type: "audio"
+                    }
+                });
+                return res.status(201).json({ message })
+            }
+            return res.status(404).json("From, to and message is required")
+
+        }
+        return res.status(400).json("Audio is required")
 
 
     } catch (error) {

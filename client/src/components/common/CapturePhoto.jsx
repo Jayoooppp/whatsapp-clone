@@ -44,7 +44,7 @@ function CapturePhoto({ setImage, hideCapturePhoto }) {
         />
 
       </div>
-    </div >
+    </div>
   )
 }
 

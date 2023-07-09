@@ -9,3 +9,4 @@ export const GETALL_USERS = `${MESSAGE_ROUTE}/getAllUsers`;
 export const ADD_MESSAGE = `${MESSAGE_ROUTE}/addMessage`;
 export const GET_MESSAGES = `${MESSAGE_ROUTE}/getMessages`;
 export const ADD_IMAGE = `${MESSAGE_ROUTE}/add-image-message`;
+export const ADD_AUDIO = `${MESSAGE_ROUTE}/add-audio-message`;
