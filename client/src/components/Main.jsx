@@ -11,11 +11,12 @@ import { CHECK_USER_ROUTE, GET_MESSAGES, HOST } from "@/utils/ApiRoutes";
 import { reducerCases } from "@/context/constants";
 import Chat from "./Chat/Chat";
 import { io } from "socket.io-client";
+import SearchMessages from "./Chat/SearchMessages";
 
 function Main() {
   const [redirectLogin, setRedirectLogin] = useState(false);
   const router = useRouter();
-  const [{ userInfo, currentChatUser }, dispatch] = useStateProvier();
+  const [{ userInfo, currentChatUser, messageSearch }, dispatch] = useStateProvier();
   const socket = useRef();
   const [socketEvent, setSocketEvent] = useState(false)
 
@@ -95,7 +96,12 @@ function Main() {
         {
           currentChatUser ? (
             <>
-              <Chat />
+              <div className={messageSearch ? "grid grid-cols-2" : "grid-cols-2"}>
+                <Chat />
+                {
+                  messageSearch && <SearchMessages />
+                }
+              </div>
             </>
           ) : (
             <>
