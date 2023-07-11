@@ -1,4 +1,5 @@
-export const HOST = "http://localhost:5050";
+// export const HOST = process.env.MONGO;
+export const HOST = "http://localhost:5050"
 
 const AUTH_ROUTE = `${HOST}/api/auth`;
 const MESSAGE_ROUTE = `${HOST}/api/message`;
@@ -10,3 +11,4 @@ export const ADD_MESSAGE = `${MESSAGE_ROUTE}/addMessage`;
 export const GET_MESSAGES = `${MESSAGE_ROUTE}/getMessages`;
 export const ADD_IMAGE = `${MESSAGE_ROUTE}/add-image-message`;
 export const ADD_AUDIO = `${MESSAGE_ROUTE}/add-audio-message`;
+export const GET_INITIAL_CONTACTS_ROUTE = `${MESSAGE_ROUTE}/get-initial-contact`;
