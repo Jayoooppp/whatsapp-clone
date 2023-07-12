@@ -14,7 +14,6 @@ function ChatLIstItem({ isContactPage = false, data }) {
     setLastMessage(messages.slice(-1))
   }, [messages])
 
-  console.log(data)
   const handleContactClick = () => {
     if (!isContactPage) {
       dispatch({
@@ -47,7 +46,7 @@ function ChatLIstItem({ isContactPage = false, data }) {
         {
           !isContactPage && (
             <div>
-              <span className={`${data.totalUnreadMessages === 0 ? "text-secondary" : "text-icon-green"} text-sm`} >
+              <span className={`${data?.totalUnreadMessages === 0 ? "text-secondary" : "text-icon-green"} text-sm`} >
                 {calculateTime(data.createdAt)}
               </span>
             </div>
