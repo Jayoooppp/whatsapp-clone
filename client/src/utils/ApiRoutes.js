@@ -1,6 +1,5 @@
 // export const HOST = process.env.MONGO;
-export const HOST = "http://localhost:5050"
-
+export const HOST = process.env.NEXT_PUBLIC_HOST
 const AUTH_ROUTE = `${HOST}/api/auth`;
 const MESSAGE_ROUTE = `${HOST}/api/message`;
 
