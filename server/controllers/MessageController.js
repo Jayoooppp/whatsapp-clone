@@ -249,13 +249,13 @@ export const getInitialContactsWithMessages = async (req, res) => {
                 }
                 // setting the message for receiver user 
                 users.set(calculatedId, { ...user })
-            } else if (msg.messageStatus !== "read" && !isSender) {
+            } else if (messageStatus !== "read" && !isSender) {
                 // if current message is received by the current user and sender is already added in the list
                 // then increasing the count of the total messagse send by the sender that are unread
                 const user = users.get(calculatedId);
                 users.set(calculatedId, {
                     ...user,
-                    totalUnreadMessages: users.totalUnreadMessages + 1,
+                    totalUnreadMessages: user.totalUnreadMessages + 1,
                 })
             }
         });
