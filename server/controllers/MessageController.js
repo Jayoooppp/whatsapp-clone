@@ -40,7 +40,7 @@ export const addMessage = async (req, res) => {
                     message,
                     sender: { connect: { id: parseInt(from) } },
                     receiver: { connect: { id: parseInt(to) } },
-                    messageStatus: getUser ? "deliverd" : "sent",
+                    messageStatus: getUser ? "delivered" : "sent",
                 },
                 include: { sender: true, receiver: true },
             });

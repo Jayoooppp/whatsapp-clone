@@ -9,7 +9,8 @@ export const initialState = {
     socket: undefined,
     messageSearch: false,
     userContacts: [],
-    onlineUsers: []
+    onlineUsers: [],
+    filteredContacts: [],
 }
 
 const reducer = (state, action) => {
@@ -70,6 +71,13 @@ const reducer = (state, action) => {
                 onlineUsers: action.onlineUsers
             }
 
+        case reducerCases.SET_CONTACT_SEARCH:
+            const filteredContacts = state.userContacts.filter((contact) => contact.name.toLowerCase().includes(action.contactSearch.toLowerCase()))
+            return {
+                ...state,
+                contactSearch: action.contactSearch,
+                filteredContacts
+            }
         default:
             return state;
 
