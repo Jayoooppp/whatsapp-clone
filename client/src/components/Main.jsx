@@ -12,11 +12,21 @@ import { reducerCases } from "@/context/constants";
 import Chat from "./Chat/Chat";
 import { io } from "socket.io-client";
 import SearchMessages from "./Chat/SearchMessages";
+import VideoCall from "./Call/VideoCall";
+import VoiceCall from "./Call/VoiceCall";
 
 function Main() {
   const [redirectLogin, setRedirectLogin] = useState(false);
   const router = useRouter();
-  const [{ userInfo, currentChatUser, messageSearch }, dispatch] = useStateProvier();
+  const [{ userInfo,
+    currentChatUser,
+    messageSearch,
+    videoCall,
+    voiceCall,
+    incomingVoiceCall,
+    incomingVideoCall },
+    dispatch] = useStateProvier();
+
   const socket = useRef();
   const [socketEvent, setSocketEvent] = useState(false)
 
@@ -91,25 +101,40 @@ function Main() {
 
   return (
     <>
-      <div className="grid grid-cols-main h-screen w-screen max-h-screen max-w-full overflow-hidden">
-        <ChatList />
-        {
-          currentChatUser ? (
-            <>
-              <div className={messageSearch ? "grid grid-cols-2" : "grid-cols-2"}>
-                <Chat />
-                {
-                  messageSearch && <SearchMessages />
-                }
-              </div>
-            </>
-          ) : (
-            <>
-              <Empty />
-            </>
-          )
-        }
-      </div>
+      {
+        videoCall && <div className="h-screen w-screen max-h-full overflow-hidden">
+          <VideoCall />
+        </div>
+      }
+      {
+        voiceCall && <div className="h-screen w-screen max-h-full overflow-hidden">
+          <VoiceCall />
+        </div>
+      }
+      {
+        !videoCall && !voiceCall && (
+          <div className="grid grid-cols-main h-screen w-screen max-h-screen max-w-full overflow-hidden">
+            <ChatList />
+            {
+              currentChatUser ? (
+                <>
+                  <div className={messageSearch ? "grid grid-cols-2" : "grid-cols-2"}>
+                    <Chat />
+                    {
+                      messageSearch && <SearchMessages />
+                    }
+                  </div>
+                </>
+              ) : (
+                <>
+                  <Empty />
+                </>
+              )
+            }
+          </div>
+        )
+      }
+
     </>
   );
 }

@@ -1,19 +1,44 @@
 import { useStateProvier } from "@/context/StateContext";
 import { reducerCases } from "@/context/constants";
 import { GETALL_USERS } from "@/utils/ApiRoutes";
-import axios from "axios";
+import axios, { all } from "axios";
 import React, { useEffect, useState } from "react";
 import { BiArrowBack, BiSearchAlt2 } from "react-icons/bi";
 import ChatLIstItem from "./ChatLIstItem";
 
 function ContactsList() {
   const [allContacts, setAllContacts] = useState([])
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchContacts, setSearchContacts] = useState([])
   const [{ }, dispatch] = useStateProvier();
+
+  useEffect(() => {
+
+    if (searchTerm.length > 0) {
+
+      const filteredData = {};
+
+      Object.keys(allContacts).forEach((key) => {
+        filteredData[key] = allContacts[key].filter((contact) =>
+          contact.name.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      });
+      setSearchContacts(filteredData);
+
+
+    } else {
+      setSearchContacts(allContacts);
+    }
+
+  }, [searchTerm])
+
+
   useEffect(() => {
     const getContacts = async () => {
       try {
         const { data: { users } } = await axios.get(GETALL_USERS);
         setAllContacts(users);
+        setSearchContacts(users);
       } catch (error) {
         console.log(error);
       }
@@ -46,17 +71,26 @@ function ContactsList() {
             <input
               type="text"
               placeholder="Search Contacts"
-              className="bg-transparent text-sm focus:outline-none text-white w-full" />
+              className="bg-transparent text-sm focus:outline-none text-white w-full"
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+              }}
+            />
           </div>
         </div>
       </div>
       {
-        Object.entries(allContacts).map(([initialLetter, userList]) => {
+        Object.entries(searchContacts).map(([initialLetter, userList]) => {
           return (
             <div key={Date.now() + initialLetter}>
-              <div className="text-teal-light pl-10 py-5">
-                {initialLetter}
-              </div>
+              {
+                userList.length > 0 && (
+                  <div className="text-teal-light pl-10 py-5">
+                    {initialLetter}
+                  </div>
+                )
+              }
               {
                 userList.map((contact) => (
                   <ChatLIstItem
