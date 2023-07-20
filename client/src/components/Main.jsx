@@ -14,6 +14,8 @@ import { io } from "socket.io-client";
 import SearchMessages from "./Chat/SearchMessages";
 import VideoCall from "./Call/VideoCall";
 import VoiceCall from "./Call/VoiceCall";
+import IncomingVideoCall from "./common/IncomingVideoCall";
+import IncomingCall from "./common/IncomingCall";
 
 function Main() {
   const [redirectLogin, setRedirectLogin] = useState(false);
@@ -30,6 +32,10 @@ function Main() {
   const socket = useRef();
   const [socketEvent, setSocketEvent] = useState(false)
 
+  // useEffect(() => {
+  //   console.log(incomingVideoCall)
+  // }, [incomingVideoCall])
+
   useEffect(() => {
     if (socket.current && !socketEvent) {
       socket.current.on("msg-receive", (data) => {
@@ -40,6 +46,34 @@ function Main() {
           }
         })
       })
+
+      socket.current.on("incoming-voice-call", ({ from, roomId, callType }) => {
+        dispatch({
+          type: reducerCases.SET_INCOMING_VOICE_CALL,
+          incomingVoiceCall: { ...from, roomId, callType }
+        })
+      })
+      socket.current.on("incoming-video-call", ({ from, roomId, callType }) => {
+        dispatch({
+          type: reducerCases.SET_INCOMING_VIDEO_CALL,
+          incomingVideoCall: { ...from, roomId, callType }
+        })
+
+      })
+
+      socket.current.on("voice-call-rejected", () => {
+        dispatch({
+          type: reducerCases.END_CALL,
+
+        })
+      })
+      socket.current.on("video-call-rejected", () => {
+        dispatch({
+          type: reducerCases.END_CALL,
+
+        })
+      })
+
 
 
       setSocketEvent(true);
@@ -101,6 +135,12 @@ function Main() {
 
   return (
     <>
+      {
+        incomingVideoCall && <IncomingVideoCall />
+      }
+      {
+        incomingVoiceCall && <IncomingCall />
+      }
       {
         videoCall && <div className="h-screen w-screen max-h-full overflow-hidden">
           <VideoCall />
