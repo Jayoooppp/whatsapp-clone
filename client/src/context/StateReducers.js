@@ -99,6 +99,7 @@ const reducer = (state, action) => {
                 incomingVoiceCall: action.incomingVoiceCall
             }
         case reducerCases.SET_INCOMING_VIDEO_CALL:
+            // console.log(action.incomingVideoCall)
             return {
                 ...state,
                 incomingVideoCall: action.incomingVideoCall
