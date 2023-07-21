@@ -48,6 +48,7 @@ function Main() {
       })
 
       socket.current.on("incoming-voice-call", ({ from, roomId, callType }) => {
+        console.log(roomId)
         dispatch({
           type: reducerCases.SET_INCOMING_VOICE_CALL,
           incomingVoiceCall: { ...from, roomId, callType }
