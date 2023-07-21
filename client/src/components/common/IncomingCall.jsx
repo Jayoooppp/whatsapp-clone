@@ -15,7 +15,7 @@ function IncomingCall() {
 
     socket.current.emit("accept-incoming-call", { id: incomingVoiceCall.id })
     dispatch({
-      type: reducerCases.SET_INCOMING_VIDEO_CALL,
+      type: reducerCases.SET_INCOMING_VOICE_CALL,
       incomingVoiceCall: undefined
     })
 
