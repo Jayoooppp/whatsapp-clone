@@ -34,7 +34,7 @@ function Avatar({ type, image, setImage }) {
 
 
 
-  const showContextMeny = (e) => {
+  const showContextMenu = (e) => {
     e.preventDefault();
     setcontextMenyCordinates({ x: e.pageX, y: e.pageY })
     setisContextMenuVisible(true);
@@ -96,14 +96,14 @@ function Avatar({ type, image, setImage }) {
             onMouseLeave={() => setHover(false)}
           >
             <div
-              onClick={(e) => showContextMeny(e)}
+              onClick={(e) => showContextMenu(e)}
               id="context-opener"
               className={`${hover ? "visible" : "hidden"} z-10 bg-photopicker-overlay-background h-60 w-60 absolute top-0 left-0 flex items-center rounded-full justify-center flex-col text-center gap-2`}>
-              <FaCamera className="text-2xl" onClick={(e) => showContextMeny(e)}
+              <FaCamera className="text-2xl" onClick={(e) => showContextMenu(e)}
 
                 id="context-opener" />
               <span
-                onClick={(e) => showContextMeny(e)}
+                onClick={(e) => showContextMenu(e)}
                 id="context-opener"
               >change <br />profile <br /> picture</span>
             </div>

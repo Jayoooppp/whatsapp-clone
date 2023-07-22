@@ -14,7 +14,6 @@ function Container({ data }) {
   const [localStream, setLocalStream] = useState(undefined)
   const [publishStream, setPublishStream] = useState(undefined)
 
-  console.log(token)
   useEffect(() => {
     if (data.type === "out-going") {
       socket.current.on("accept-call", () => {
