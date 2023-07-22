@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Avatar from "../common/Avatar";
 import { MdCall } from "react-icons/md"
 import { IoVideocam } from "react-icons/io5"
@@ -6,10 +6,36 @@ import { BiSearchAlt2 } from "react-icons/bi"
 import { BsThreeDotsVertical } from "react-icons/bs"
 import { useStateProvier } from "@/context/StateContext";
 import { reducerCases } from "@/context/constants";
+import ContextMenu from "../common/ContextMenu";
 
 
 function ChatHeader() {
-  const [{ userInfo, currentChatUser }, dispatch] = useStateProvier();
+  const [{ userInfo, currentChatUser, onlineUsers }, dispatch] = useStateProvier();
+
+
+  const [isContextMenuVisible, setisContextMenuVisible] = useState(false);
+  const [contextMenyCordinates, setcontextMenyCordinates] = useState({
+    x: 0,
+    y: 0
+  })
+
+
+  const showContextMenu = (e) => {
+    e.preventDefault();
+    setcontextMenyCordinates({ x: e.pageX - 50, y: e.pageY + 20 })
+    setisContextMenuVisible(true);
+  }
+
+  const contextMenyOptions = [
+    {
+      text: "Exit",
+      callback: async () => {
+        setisContextMenuVisible(false);
+        dispatch({ type: reducerCases.SET_EXIT_CHAT })
+
+      }
+    }
+  ]
 
   const handleVoiceCall = () => {
     dispatch({
@@ -41,7 +67,9 @@ function ChatHeader() {
         <Avatar type="sm" image={currentChatUser?.profilePicture} />
         <div className="flex flex-col">
           <span className="text-primary-strong">{currentChatUser?.name}</span>
-          <span className="text-secondary text-sm">Online/Offline</span>
+          <span className="text-secondary text-sm">{
+            onlineUsers?.includes(currentChatUser?.id) ? "Online" : "Offline"
+          }</span>
         </div>
       </div>
       <div className="flex gap-6">
@@ -59,7 +87,17 @@ function ChatHeader() {
             dispatch({ type: reducerCases.SET_MESSAGE_SEARCH })
           }}
         />
-        <BsThreeDotsVertical className="text-panel-header-icon cursor-pointer text-xl" />
+        <BsThreeDotsVertical
+          onClick={(e) => showContextMenu(e)}
+          id="context-opener"
+          className="text-panel-header-icon cursor-pointer text-xl" />
+        {isContextMenuVisible &&
+          <ContextMenu
+            options={contextMenyOptions}
+            cordinates={contextMenyCordinates}
+            contextMenu={isContextMenuVisible}
+            setContextMenu={setisContextMenuVisible}
+          />}
       </div>
     </div>
   )

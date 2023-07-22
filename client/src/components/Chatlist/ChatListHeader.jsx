@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import Avatar from "../common/Avatar";
 import { useStateProvier } from "@/context/StateContext";
 import { BsChatLeftTextFill, BsThreeDotsVertical } from "react-icons/bs"
 import { reducerCases } from "@/context/constants";
-
+import { useRouter } from "next/router";
+import ContextMenu from "../common/ContextMenu";
 function ChatListHeader() {
+  const router = useRouter();
   const [{ userInfo }, dispatch] = useStateProvier();
 
   const handleAllContactsPage = () => {
@@ -12,6 +14,31 @@ function ChatListHeader() {
       type: reducerCases.SET_ALL_CONTACTS_PAGE
     })
   }
+
+  const [isContextMenuVisible, setisContextMenuVisible] = useState(false);
+  const [contextMenyCordinates, setcontextMenyCordinates] = useState({
+    x: 0,
+    y: 0
+  })
+
+
+  const showContextMenu = (e) => {
+    e.preventDefault();
+    setcontextMenyCordinates({ x: e.pageX, y: e.pageY })
+    setisContextMenuVisible(true);
+  }
+
+
+  const contextMenyOptions = [
+    {
+      text: "LogOut",
+      callback: async () => {
+        setisContextMenuVisible(false);
+        router.push("/logout")
+
+      }
+    }
+  ]
 
   return (
     <div div className="h-16 mx-4 py-3 flex justify-between items-center" >
@@ -25,7 +52,20 @@ function ChatListHeader() {
           onClick={handleAllContactsPage}
         />
         <>
-          <BsThreeDotsVertical className="text-panel-header-icon cursor-pointer text-xl" title="Menu" />
+          <BsThreeDotsVertical
+            className="text-panel-header-icon cursor-pointer text-xl"
+            title="Menu"
+            onClick={(e) => showContextMenu(e)}
+            id="context-opener"
+          />
+
+          {isContextMenuVisible &&
+            <ContextMenu
+              options={contextMenyOptions}
+              cordinates={contextMenyCordinates}
+              contextMenu={isContextMenuVisible}
+              setContextMenu={setisContextMenuVisible}
+            />}
         </>
       </div>
 
