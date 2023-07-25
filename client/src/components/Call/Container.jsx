@@ -42,7 +42,7 @@ function Container({ data }) {
 
 
   useEffect(() => {
-    const startCall = () => {
+    const startCall = async () => {
       import("zego-express-engine-webrtc").then(async ({ ZegoExpressEngine }) => {
         const zg = new ZegoExpressEngine(parseInt(process.env.NEXT_PUBLIC_ZEGO_APP_ID), process.env.NEXT_PUBLIC_ZEGO_SECRET_ID);
         setZegVar(zg)

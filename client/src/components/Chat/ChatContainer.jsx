@@ -15,8 +15,7 @@ function ChatContainer() {
       <div className="flex w-full">
         <div className="flex-col justify-end w-full gap-1 overflow-auto">
           {messages.map((message, index) => (
-
-            <div
+            message.senderId === currentChatUser.id || message.senderId === userInfo.id ? (<div
               key={message.id}
               className={`flex ${message.senderId === currentChatUser.id ? "justify-start" : "justify-end"}`}
             >
@@ -55,13 +54,15 @@ function ChatContainer() {
                 )
               }
 
-            </div>
+            </div>) :
+              (<></>)
+
           )
           )}
         </div>
       </div>
     </div>
-  </div>;
+  </div >;
 }
 
 export default ChatContainer;
