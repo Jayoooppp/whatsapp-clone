@@ -9,12 +9,22 @@ import { FaImage, FaMicrophone } from "react-icons/fa";
 function ChatLIstItem({ isContactPage = false, data }) {
   const [{ userInfo, currentChatUser, messages }, dispatch] = useStateProvier();
   const [lastMessage, setLastMessage] = useState();
+  const [unread, setUnread] = useState(false);
+
+  console.log(data)
+
+  useEffect(() => {
+    if (data?.totalUnreadMessages > 0) {
+      setUnread(true);
+    }
+  }, [data])
 
   useEffect(() => {
     setLastMessage(messages.slice(-1))
   }, [messages])
 
   const handleContactClick = () => {
+    setUnread(false);
     if (!isContactPage) {
       dispatch({
         type: reducerCases.SET_CURR_CHAT_USER,
@@ -32,7 +42,7 @@ function ChatLIstItem({ isContactPage = false, data }) {
     }
   }
   return <div
-    className={`flex cursor-pointer items-center hover:bg-background-default-hover`}
+    className={`flex cursor-pointer items-center ${(data?.senderId === currentChatUser?.id || data?.receiverId === currentChatUser?.id) && 'bg-background-default-hover'} hover:bg-background-default-hover`}
     onClick={handleContactClick}
   >
     <div className="min-w-fit px-5 pt-3 pb-1">
@@ -46,7 +56,7 @@ function ChatLIstItem({ isContactPage = false, data }) {
         {
           !isContactPage && (
             <div>
-              <span className={`${data?.totalUnreadMessages === 0 ? "text-secondary" : "text-icon-green"} text-sm`} >
+              <span className={`${(data?.totalUnreadMessages > 0 && unread) ? "text-icon-green" : "text-secondary"} text-sm`} >
                 {calculateTime(data.createdAt)}
               </span>
             </div>
@@ -83,7 +93,7 @@ function ChatLIstItem({ isContactPage = false, data }) {
             </div>)}
           </span>
           {
-            data?.totalUnreadMessages > 0 && <span className="bg-icon-green px-[5px] rounded-full text-sm">{data?.totalUnreadMessages}</span>
+            (data?.totalUnreadMessages > 0 && unread) && <span className="bg-icon-green px-[5px] rounded-full text-sm">{data?.totalUnreadMessages}</span>
           }
         </div>
       </div>

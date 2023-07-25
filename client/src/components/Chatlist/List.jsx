@@ -6,7 +6,7 @@ import React, { useEffect } from "react";
 import ChatLIstItem from "./ChatLIstItem";
 
 function List() {
-  const [{ userInfo, userContacts, filteredContacts }, dispatch] = useStateProvier();
+  const [{ userInfo, userContacts, filteredContacts, messages }, dispatch] = useStateProvier();
   useEffect(() => {
     const getContacts = async () => {
       try {
@@ -21,7 +21,7 @@ function List() {
     if (userInfo?.id) {
       getContacts();
     }
-  }, [userInfo])
+  }, [userInfo, messages])
 
   return (
     <div className="bg-search-input-container-background flex-auto overflow-auto max-h-full custom-scrollbar">
