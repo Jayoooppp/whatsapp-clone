@@ -1,13 +1,24 @@
 import { useStateProvier } from "@/context/StateContext";
 import { calculateTime } from "@/utils/CalculateTime";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import MessageStatus from "../common/MessageStatus";
 import ImageMessage from "./ImageMessage";
 import dynamic from "next/dynamic";
+import { AiOutlineArrowDown } from "react-icons/ai"
 const VoiceMessage = dynamic(() => import("./VoiceMessage"), { ssr: false });
 
 function ChatContainer() {
   const [{ messages, userInfo, currentChatUser }] = useStateProvier();
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    setIndex(messages.length - 1);
+  }, [messages])
+
+  const scrollDown = () => {
+    var access = document.getElementById(`message ${index}`);
+    access.scrollIntoView({ behavior: "smooth" }, true);
+  }
 
   return <div className="h-[80vh] w-full relative flex-grow overflow-auto custom-scrollbar">
     <div className="bg-chat-background bg-fixed w-full h-full opacity-5 fixed left-0 top-0 z-0"></div>
@@ -21,6 +32,7 @@ function ChatContainer() {
             >
               {message.type === "text" && (
                 <div
+                  id={'message ' + index}
                   className={`text-white px-2 py-[5px] mt-2 text-base rounded-md flex gap-2 
                     items-end max-w-[45%] ${message.senderId === currentChatUser?.id ? "bg-incoming-background" : "bg-outgoing-background"}`}>
                   <span className="break-all">{message.message}</span>
@@ -62,7 +74,10 @@ function ChatContainer() {
         </div>
       </div>
     </div>
-  </div >;
+    <div className="flex justify-end  mr-1 mt-5 sticky bottom-2">
+      <AiOutlineArrowDown className="h-6 w-6 rounded-full text-panel-header-icon cursor-pointer text-xl bg-panel-header-background" onClick={scrollDown} />
+    </div>
+  </div>;
 }
 
 export default ChatContainer;
