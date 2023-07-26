@@ -11,7 +11,6 @@ function ChatLIstItem({ isContactPage = false, data }) {
   const [lastMessage, setLastMessage] = useState();
   const [unread, setUnread] = useState(false);
 
-  console.log(data)
 
   useEffect(() => {
     if (data?.totalUnreadMessages > 0) {
