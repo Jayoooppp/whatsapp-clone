@@ -5,6 +5,7 @@
   },
   "dependencies": {
     "@prisma/client": "^4.14.0",
+    "agora-token": "^2.0.3",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "dotenv": "^16.0.3",
