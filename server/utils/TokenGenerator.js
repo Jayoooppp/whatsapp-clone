@@ -140,7 +140,6 @@ export const generateRtcToken = (channelName) => {
 
   // Build token with uid
   const tokenA = RtcTokenBuilder.buildTokenWithUid(appId, appCertificate, channelName, uid, role, privilegeExpiredTs);
-  console.log("Token With Integer Number Uid: " + tokenA);
 
   return tokenA;
 
