@@ -11,7 +11,8 @@ function ChatListHeader() {
 
   const handleAllContactsPage = () => {
     dispatch({
-      type: reducerCases.SET_ALL_CONTACTS_PAGE
+      type: reducerCases.SET_CONTACTS_PAGE,
+      page: "all-contacts"
     })
   }
 

@@ -3,7 +3,7 @@ import { reducerCases } from "./constants";
 export const initialState = {
     userInfo: undefined,
     newUser: false,
-    contactsPage: false,
+    contactsPage: "default",
     currentChatUser: undefined,
     messages: [],
     socket: undefined,
@@ -14,7 +14,8 @@ export const initialState = {
     videoCall: undefined,
     voiceCall: undefined,
     incomingVoiceCall: undefined,
-    incomingVideoCall: undefined
+    incomingVideoCall: undefined,
+
 
 }
 
@@ -31,10 +32,10 @@ const reducer = (state, action) => {
                 ...state,
                 newUser: action.newUser
             }
-        case reducerCases.SET_ALL_CONTACTS_PAGE:
+        case reducerCases.SET_CONTACTS_PAGE:
             return {
                 ...state,
-                contactsPage: !state.contactsPage
+                contactsPage: action.page
             }
 
         case reducerCases.SET_CURR_CHAT_USER:
@@ -117,6 +118,13 @@ const reducer = (state, action) => {
                 ...state,
                 currentChatUser: undefined
             }
+
+        case reducerCases.SET_CREATE_GROUP:
+            return {
+                ...state,
+                createGroup: !state.createGroup
+            }
+
         default:
             return state;
 
