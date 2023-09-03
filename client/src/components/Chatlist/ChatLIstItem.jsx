@@ -37,11 +37,11 @@ function ChatLIstItem({ isContactPage = false, data }) {
       })
     } else {
       dispatch({ type: reducerCases.SET_CURR_CHAT_USER, user: data })
-      dispatch({ type: reducerCases.SET_ALL_CONTACTS_PAGE })
+      dispatch({ type: reducerCases.SET_CONTACTS_PAGE, page: "default" })
     }
   }
   return <div
-    className={`flex cursor-pointer items-center ${(data?.senderId === currentChatUser?.id || data?.receiverId === currentChatUser?.id) && 'bg-background-default-hover'} hover:bg-background-default-hover`}
+    className={`flex cursor-pointer items-center ${currentChatUser?.id !== undefined && ((data?.senderId === currentChatUser?.id) !== (data?.receiverId === currentChatUser?.id)) ? 'bg-background-default-hover ' : ''}hover:bg-background-default-hover`}
     onClick={handleContactClick}
   >
     <div className="min-w-fit px-5 pt-3 pb-1">
