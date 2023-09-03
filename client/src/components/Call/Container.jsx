@@ -1,7 +1,9 @@
 import { useStateProvier } from "@/context/StateContext";
 import { reducerCases } from "@/context/constants";
 import { GET_TOKEN } from "@/utils/ApiRoutes";
-import axios from "axios";
+import dynamic from 'next/dynamic'; // If using Next.js, otherwise use your preferred dynamic import function
+import axios from 'axios';
+const DynamicAgoraUIKit = dynamic(() => import('agora-react-uikit'), { ssr: false });
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { MdOutlineCall, MdOutlineCallEnd } from "react-icons/md";
@@ -9,10 +11,18 @@ import { MdOutlineCall, MdOutlineCallEnd } from "react-icons/md";
 function Container({ data }) {
   const [{ socket, userInfo }, dispatch] = useStateProvier();
   const [callAccepted, setCallAccepted] = useState(false)
-  const [token, setToken] = useState(undefined)
+  const [startCall, setStartCall] = useState(false);
   const [zegVar, setZegVar] = useState(undefined)
   const [localStream, setLocalStream] = useState(undefined)
   const [publishStream, setPublishStream] = useState(undefined)
+
+
+
+  const [rtcProps, setRtcProps] = useState({
+    appId: process.env.NEXT_PUBLIC_AGORA_APP_ID,
+    channel: undefined,  // your agora channel
+    token: undefined// use null or skip if using app in testing mode
+  })
 
   useEffect(() => {
     if (data.type === "out-going") {
@@ -30,136 +40,79 @@ function Container({ data }) {
   useEffect(() => {
     const getToken = async () => {
       try {
-        const { data: { token: returnedToken } } = await axios.get(`${GET_TOKEN}/${userInfo.id}`);
-        setToken(returnedToken);
+        const { data: { token: returnedToken } } = await axios.get(`${GET_TOKEN}/${data.roomId}`);
+        setRtcProps({ ...rtcProps, token: returnedToken, channel: data?.roomId?.toString() });
+        setStartCall(true);
       } catch (error) {
         console.log("Eror")
-        console.log(error)
       }
     }
-    getToken();
-  }, [callAccepted])
+    if (data) {
+      getToken();
+    }
+  }, [callAccepted, data])
 
+  console.log(data)
 
-  useEffect(() => {
-    const startCall = async () => {
-      import("zego-express-engine-webrtc").then(async ({ ZegoExpressEngine }) => {
-        const zg = new ZegoExpressEngine(parseInt(process.env.NEXT_PUBLIC_ZEGO_APP_ID), process.env.NEXT_PUBLIC_ZEGO_SECRET_ID);
-        setZegVar(zg)
-        zg.on("roomStreamUpdate", async (roomId, updateType, streamList, extendedData) => {
-          if (updateType === "ADD") {
-            const rmVideo = document.getElementById("remote-video");
-            const vd = document.createElement(data.callType === "video" ? "video" : "audio")
-            vd.id = streamList[0].streamID;
-            vd.autoplay = true;
-            vd.playsInline = true;
-            vd.muted = false;
-            if (rmVideo) {
-              rmVideo.appendChild(vd);
-            }
-            zg.startPlayingStream(streamList[0].streamID, {
-              audio: true,
-              video: true
-            }).then((stream) => (vd.srcObject = stream))
-          } else if (updateType === "DELETE" && zg && localStream && streamList[0].streamID) {
-            zg.destroyStream(localStream);
-            zg.stopPublishingStream(streamList[0].streamID)
-            zg.logoutRoom(data.roomId.toString());
-            dispatch({
-              type: reducerCases.END_CALL
-            })
-          }
+  const callbacks = {
+    EndCall: () => {
+      console.log("End call");
+      if (data.callType === "voice") {
+
+        socket.current.emit("reject-voice-call", {
+          from: data?.id
         })
-        await zg.loginRoom(data.roomId.toString(),
-          token,
-          { userID: userInfo?.id.toString(), userName: userInfo.name },
-          { userUpdate: true })
 
-        const localStream = await zg.createStream({
-          camera: {
-            audio: true,
-            video: data.callType === "video" ? true : false,
-          }
+      } else {
+
+        socket.current.emit("reject-video-call", {
+          from: data?.id
         })
-        const localVideo = document.getElementById("local-video");
-        const videoElement = document.createElement(
-          data.callType === "video" ? "video" : "audio",
-        )
-        videoElement.id = "video-local-zego";
-        videoElement.className = "h-28 w-32";
-        videoElement.autoplay = true;
-        videoElement.muted = false;
-        videoElement.playsInline = true;
-        localVideo?.appendChild(videoElement);
 
-        const td = document.getElementById("video-local-zego");
-        td.srcObject = localStream;
-        const streamId = '123' + Date.now();
-        setPublishStream(streamId);
-        setLocalStream(localStream);
-        zg.startPublishingStream(streamId, localStream);
+      }
+      dispatch({
+        type: reducerCases.END_CALL
       })
+    },
+  };
+  // const endCall = () => {
+  //   console.log("End call");
+  //   if (data.callType === "voice") {
 
-    }
-    if (token) {
-      startCall();
-    }
-  }, [token])
+  //     socket.current.emit("reject-voice-call", {
+  //       from: id
+  //     })
 
-  const endCall = () => {
+  //   } else {
 
-    const id = data.id;
-    if (zegVar && localStream && publishStream) {
-      console.log("END CALL")
-      zegVar.destroyStream(localStream);
-      zegVar.stopPublishingStream(publishStream);
-      zegVar.logoutRoom(data.roomId.toString())
-    }
-    if (data.callType === "voice") {
+  //     socket.current.emit("reject-video-call", {
+  //       from: id
+  //     })
 
-      socket.current.emit("reject-voice-call", {
-        from: id
-      })
+  //   }
+  //   dispatch({
+  //     type: reducerCases.END_CALL
+  //   })
+  // }
 
-    } else {
-
-      socket.current.emit("reject-video-call", {
-        from: id
-      })
-
-    }
-    dispatch({
-      type: reducerCases.END_CALL
-    })
-  }
-
-  return <div className="border-conversation-border border-l w-full bg-conversation-panel-background flex flex-col h-[100vh] overflow-hidden items-center justify-center">
-    <div className="flex flex-col gap-3 items-center text-white">
-      <span className="text-5xl">{data?.name}</span>
-      <span className="text-lg">
-        {
-          callAccepted && data?.callType !== "video" ? "On going call" : "Calling"
-        }
-      </span>
-    </div>
-
-    {
-      (!callAccepted || data?.callType === "voice") && <div className="my-24 ">
-        <Image src={data?.profilePicture} alt="avatar" height={300} width={300} className="rounded-full" />
-      </div>
-    }
-
-    <div className="my-5 relative" id="remote-video">
-      <div className="absolute bottom-5 right-5" id="local-video">
-
-      </div>
-
-    </div>
-
-    <div className="h-16 w-16 bg-red-600 flex items-center justify-center rounded-full">
-      <MdOutlineCallEnd className="text-3xl cursor-pointer" onClick={endCall} />
-    </div>
-  </div>;
+  return (
+    <>
+      {startCall ? (
+        <div style={{ display: 'flex', width: '100vw', height: '100vh' }}>
+          <DynamicAgoraUIKit rtcProps={rtcProps} callbacks={callbacks} />
+        </div>
+      ) : (
+        <div className="border-conversation-border border-l w-full bg-conversation-panel-background flex flex-col h-[100vh] overflow-hidden items-center justify-center">
+          <div className="flex flex-col gap-3 items-center text-white">
+            <span className="text-5xl">{data?.name}</span>
+            <span className="text-lg">
+              {callAccepted && data?.callType !== "video" ? "On going call" : "Calling"}
+            </span>
+          </div>
+        </div>
+      )}
+    </>
+  );
 }
 
 export default Container;

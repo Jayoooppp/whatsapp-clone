@@ -5,5 +5,5 @@ const router = express.Router();
 
 router.post("/check-user", checkUser);
 router.post("/onboard-user", onBoardUser);
-router.get("/generate-token/:userId", generateToken);
+router.get("/generate-token/:channelName", generateToken);
 export default router;
